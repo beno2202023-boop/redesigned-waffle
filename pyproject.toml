@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "esoteric-library"
+version = "0.1.0"
+description = "Playful esoteric text transformations"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Codex" }]
+
+[tool.setuptools.packages.find]
+include = ["esoteric_library*"]
