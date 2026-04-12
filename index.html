@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Audio Universe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">HTML5 Canvas + Web Audio API</p>
+          <h1>Adaptive Audio Universe</h1>
+          <p class="subtitle">
+            Upload an audio file to extract its song DNA, detect a live genre mood, and evolve
+            a persistent universe that remembers the track across browser sessions.
+          </p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel controls-panel">
+          <h2>Universe Controls</h2>
+
+          <label class="upload-field" for="audio-upload">
+            <span>Choose an audio file</span>
+            <input id="audio-upload" type="file" accept="audio/*" />
+          </label>
+
+          <audio id="audio-player" controls></audio>
+
+          <div class="status-grid">
+            <article class="status-card status-card--wide">
+              <span class="label">Song ID</span>
+              <strong id="song-id">Waiting for upload</strong>
+            </article>
+            <article class="status-card">
+              <span class="label">Universe Type</span>
+              <strong id="universe-type">—</strong>
+            </article>
+            <article class="status-card">
+              <span class="label">Active Genre</span>
+              <strong id="genre-name">Ambient / Drone</strong>
+            </article>
+            <article class="status-card">
+              <span class="label">Evolution Stage</span>
+              <strong id="evolution-stage">0</strong>
+            </article>
+            <article class="status-card">
+              <span class="label">Persisted Runs</span>
+              <strong id="play-count">0</strong>
+            </article>
+          </div>
+
+          <section class="dna-panel">
+            <h3>Song DNA</h3>
+            <div class="meter-row">
+              <span>Energy</span>
+              <div class="meter"><div id="energy-meter"></div></div>
+              <strong id="energy-value">0%</strong>
+            </div>
+            <div class="meter-row">
+              <span>Brightness</span>
+              <div class="meter"><div id="brightness-meter"></div></div>
+              <strong id="brightness-value">0%</strong>
+            </div>
+            <div class="meter-row">
+              <span>Complexity</span>
+              <div class="meter"><div id="complexity-meter"></div></div>
+              <strong id="complexity-value">0%</strong>
+            </div>
+          </section>
+
+          <section class="dna-panel live-panel">
+            <h3>Live Audio Features</h3>
+            <div class="feature-pills">
+              <span class="feature-pill"><span>BPM</span><strong id="bpm-value">0</strong></span>
+              <span class="feature-pill"><span>Bass</span><strong id="bass-value">0%</strong></span>
+              <span class="feature-pill"><span>Mids</span><strong id="mids-value">0%</strong></span>
+              <span class="feature-pill"><span>Highs</span><strong id="highs-value">0%</strong></span>
+            </div>
+            <p id="genre-description" class="genre-description">
+              Weightless, hovering, ethereal, and completely untethered from gravity.
+            </p>
+          </section>
+
+          <div class="button-row">
+            <button id="delete-song" type="button" disabled>Delete Current Universe</button>
+            <button id="clear-all" type="button">Clear All Stored Universes</button>
+          </div>
+
+          <p id="storage-message" class="storage-message">
+            Universes are persisted in localStorage and evolve each time you revisit a song.
+          </p>
+        </section>
+
+        <section class="panel visualizer-panel">
+          <div class="canvas-header">
+            <div>
+              <h2>Live Universe</h2>
+              <span id="canvas-hint">Upload a track to ignite the cosmos.</span>
+            </div>
+            <div class="legend">
+              <span><i class="dot dot--genre"></i><em id="legend-genre">ambient_drone</em></span>
+              <span><i class="dot dot--type"></i><em id="legend-type">nebula</em></span>
+            </div>
+          </div>
+          <canvas id="universe-canvas" width="1280" height="720"></canvas>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
