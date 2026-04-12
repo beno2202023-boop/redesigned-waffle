@@ -1,0 +1,172 @@
+[
+  {
+    "id": "jazz_bebop",
+    "genre": "Jazz (Bebop / Post-Bop)",
+    "description": "Highly improvisational, syncopated music where the notes you don't play matter just as much as the ones you do. Rooted in complex chord extensions and walking basslines, it's truly un-brie-lievable how much brass they have.",
+    "time_signature": "4/4 (swung)",
+    "physics_engine": {
+      "motion_pattern": "Elastic snapping. The motion constantly pulls back against an invisible tether, building immense kinetic tension before snapping forward in unpredictable, rapid-fire bursts.",
+      "gravity_weight": "Dynamic/Variable",
+      "friction": "Low",
+      "collision_handling": "Dodge and weave"
+    },
+    "render_rules": {
+      "movement_style": "Syncopated, slick gliding punctuated by sudden, sharp halts and immediate changes in direction. Imagine a swarm of fireflies tracing erratic but deeply connected pathways, reacting instantly to the snare drum's comping.",
+      "geometry": "Asymmetrical fractals, intersecting splines, and shapes with shifting pivot points. Vertices are never quite where you expect them to be, and edges frequently overlap to create complex, temporary polygrams that represent dissonant chords.",
+      "transitions": "Teleportation via 'leaps' followed by smooth, buttery slides to the next coordinate. When a soloist takes over, the background geometry temporarily dissolves into a minimalist grid to highlight the chaotic foreground movement."
+    }
+  },
+  {
+    "id": "classical_baroque",
+    "genre": "Classical (Baroque / Contrapuntal)",
+    "description": "Highly structured, mathematically rigorous compositions built on counterpoint and strict harmonic progression. If it ain't Baroque, don't fix it.",
+    "time_signature": "4/4 or 3/4",
+    "physics_engine": {
+      "motion_pattern": "Intricate, interlocking gears turning at constant, mathematically related ratios. There is zero friction in this universe; momentum is conserved perfectly across the entire system.",
+      "gravity_weight": "Zero",
+      "friction": "Zero",
+      "collision_handling": "Perfect interlocking"
+    },
+    "render_rules": {
+      "movement_style": "Precise, ornate, mirroring sequences. The movement feels inevitable and deeply intentional, like a grand celestial clockwork or a massive, golden orrery where every planetary body represents a different instrument family.",
+      "geometry": "Symmetrical fractals, perfect circles, golden ratio spirals, and pristine tessellations. Textures lean toward high-contrast monochrome, polished marble, or metallic filigree.",
+      "transitions": "Seamless folding and unfolding. The geometry behaves like an intricate, high-dimensional origami blossoming—entire structural planes rotate and lock into place precisely on the downbeat of a new movement."
+    }
+  },
+  {
+    "id": "techno_minimalist",
+    "genre": "Techno / Minimalist Electronic",
+    "description": "Synthesized dance music built on a relentless four-on-the-floor beat, utilizing repetitive loops and slow timbral evolution. It's bound to byte you with its hypnotic rhythm.",
+    "time_signature": "4/4",
+    "physics_engine": {
+      "motion_pattern": "Pulsing, concentric expansion and a piston-like vertical bounce that never wavers. The sub-bass acts as a hydraulic press, forcing the environment to compress and expand on an endless loop.",
+      "gravity_weight": "Heavy vertical pulse",
+      "friction": "None (mechanical efficiency)",
+      "collision_handling": "Rigid boundary clipping"
+    },
+    "render_rules": {
+      "movement_style": "Hypnotic, relentless, machine-like precision. It does not sway; it pushes. Objects move strictly along an X, Y, or Z axis, avoiding organic curves in favor of brutalist efficiency.",
+      "geometry": "Hard-edged neon cubes, pulsating isometric grids, and perfect, unyielding wireframes. Forms frequently duplicate themselves, stretching off into an infinite, mathematically perfect vanishing point.",
+      "transitions": "Hard cuts exactly on the grid line, strobing dissolves, and instantaneous scale snapping. Drops in the music trigger a blinding inversion of colors or a total collapse of the 3D space into a flat 2D plane for a fraction of a second."
+    }
+  },
+  {
+    "id": "hiphop_boombap",
+    "genre": "Hip-Hop (Boom Bap / Lo-Fi)",
+    "description": "Rhythmic vocal delivery anchored by heavy, often sampled, drum loops and deep sub-bass. When it comes to groove, it really beats the alternatives.",
+    "time_signature": "4/4 (often with a late snare/swing)",
+    "physics_engine": {
+      "motion_pattern": "Heavy gravitational drop. A dragging pendulum that hits the bottom of its arc with massive weight. The kick drum acts as a massive gravitational anchor, pulling all visual elements downward.",
+      "gravity_weight": "Extreme",
+      "friction": "High (viscous drag)",
+      "collision_handling": "Heavy thud/stacking"
+    },
+    "render_rules": {
+      "movement_style": "Grounded, weighty, swaggering side-to-side sway. It carries intense momentum but moves deliberately. The environment feels like it has a high friction coefficient; things drag and slide with effort.",
+      "geometry": "Thick, bold parallelograms, low-center-of-gravity trapezoids, and dense, brutalist blocks. Visually, there is a layer of 'grit' or particulate matter in the air, mimicking the texture of vinyl crackle and tape hiss.",
+      "transitions": "Layered stacking. Objects slide into frame from off-screen, carrying inertia that takes a millisecond to settle after stopping, resulting in a heavy, satisfying visual 'thud'."
+    }
+  },
+  {
+    "id": "rock_metal",
+    "genre": "Rock (Hard Rock / Heavy Metal)",
+    "description": "Amplified, distorted guitars driving aggressive, anthemic rhythms over explosive drum fills. They really know how to conduct themselves under high voltage.",
+    "time_signature": "4/4 or 12/8",
+    "physics_engine": {
+      "motion_pattern": "Driving forward propulsion intercut with jagged, lightning-strike spikes on the downbeats. The kinetic energy constantly pushes forward, like an engine running completely redlined.",
+      "gravity_weight": "Standard",
+      "friction": "Low",
+      "collision_handling": "Explosive shattering"
+    },
+    "render_rules": {
+      "movement_style": "Aggressive, expansive, and explosive. It constantly attempts to break out of its bounding box. Elements vibrate violently with the simulated distortion (clipping) of the audio signal.",
+      "geometry": "Sharp triangles, jagged spikes, and high-contrast, asymmetrical polygons. The geometry mimics the literal waveforms of a heavily distorted guitar—fuzzy, saturated, and overwhelmingly dense.",
+      "transitions": "Shattering. The current state explodes into fragments on a heavy crash cymbal, which violently and magnetically slam back together into the new geometric state on the next verse or chorus."
+    }
+  },
+  {
+    "id": "waltz_romantic",
+    "genre": "Waltz / Classical Romantic",
+    "description": "Elegant, sweeping ballroom music characterized by lush orchestration and dramatic swells in volume and tempo (rubato). It's guaranteed to leave you in a spin.",
+    "time_signature": "3/4",
+    "physics_engine": {
+      "motion_pattern": "Cyclical swooping. A heavy beat 1 followed by a lifting, suspended beat 2 and 3. Gravity feels light and elastic, allowing objects to hang in the air at the peak of their arcs.",
+      "gravity_weight": "Light/Elastic",
+      "friction": "Low",
+      "collision_handling": "Gliding evasion"
+    },
+    "render_rules": {
+      "movement_style": "Graceful, continuous flowing rotation. It moves like a skater gliding across ice, governed entirely by centrifugal force. The camera itself acts as a dancer, constantly orbiting the central geometric subjects.",
+      "geometry": "Interlocking rings, smooth sine waves, ellipses, and sweeping bezier curves. Forms are frequently translucent, layering over one another to create lush, combined color palettes.",
+      "transitions": "Cross-fading spirals and fluid, liquid-like melting. Instead of hard cuts, one form smoothly unravels and bleeds into the next, mimicking the seamless bowing of a string section."
+    }
+  },
+  {
+    "id": "reggae_dub",
+    "genre": "Reggae / Dub",
+    "description": "Syncopated, off-beat rhythms characterized by heavy bass lines, spacious echoes, and extreme delay effects. It’s a shore thing to alter your frequency.",
+    "time_signature": "4/4 (accent on 3)",
+    "physics_engine": {
+      "motion_pattern": "Delayed buoyant bob. It drops heavily but rebounds as if submerged in a dense fluid, like a buoy in the ocean reacting to a passing wave.",
+      "gravity_weight": "Submerged/Buoyant",
+      "friction": "High (fluid dynamics)",
+      "collision_handling": "Soft compression"
+    },
+    "render_rules": {
+      "movement_style": "Laid-back, undulating, and trailing fading echoes of its previous positions. Objects leave physical motion-blur trails that slowly dissipate based on the audio's delay feedback loop.",
+      "geometry": "Soft, rounded blobs, rippling waveforms, and shapes with blurred, diffused boundaries. Hard corners are forbidden; everything feels eroded by time and water.",
+      "transitions": "Dissolving into smoke or floating particles, with heavy wave-ripple displacement (like looking through warped glass) guiding the eye smoothly to the next visual element."
+    }
+  },
+  {
+    "id": "mathrock_prog",
+    "genre": "Math Rock / Progressive Metal",
+    "description": "Unconventional, highly complex rhythmic structures, odd meter changes, and virtuosic technicality. It really adds up to a cerebral, wild ride that demands intense focus.",
+    "time_signature": "Mixed (7/8, 5/4, 11/8)",
+    "physics_engine": {
+      "motion_pattern": "Stuttering, jagged forward momentum. It feels like sprinting up a staircase where the steps keep changing height and depth mid-stride.",
+      "gravity_weight": "Constantly shifting axis",
+      "friction": "Variable",
+      "collision_handling": "Non-Euclidean clipping"
+    },
+    "render_rules": {
+      "movement_style": "Calculated, jittery, angular, and constantly re-orienting its axis of gravity. Up suddenly becomes down; left becomes forward. The viewer is kept in a state of thrilling disorientation.",
+      "geometry": "Tesseracts, non-Euclidean polyhedrons, impossible M.C. Escher-like staircases, and constantly shifting multi-dimensional grids that pulse to the polyrhythms.",
+      "transitions": "Glitching and sharp, violent resets. Rapid rotation on a 4th-dimensional axis turns objects inside out, accompanied by complex, kaleidoscopic tessellation swapping."
+    }
+  },
+  {
+    "id": "ambient_drone",
+    "genre": "Ambient / Drone",
+    "description": "Textural, atmospheric soundscapes prioritizing tone, resonance, and space over distinct rhythm or melody. It’s a very sound investment for spatial exploration.",
+    "time_signature": "Free time / None",
+    "physics_engine": {
+      "motion_pattern": "Drifting, slow amoebic expansion. There is no distinct pulse; motion is driven by slow-moving LFOs (Low-Frequency Oscillators), mimicking deep, meditative breathing.",
+      "gravity_weight": "Zero",
+      "friction": "None",
+      "collision_handling": "Volumetric blending"
+    },
+    "render_rules": {
+      "movement_style": "Weightless, hovering, ethereal, and completely untethered from gravity. It feels like watching ink bloom in a tank of water in extreme slow motion.",
+      "geometry": "Amorphous clouds, glowing gradients, borderless spheres, and dense volumetric fog. Shapes lack solid surfaces, defined entirely by light passing through them.",
+      "transitions": "Extremely slow, imperceptible morphing. Colors and shapes shift without any hard edges or defined start/stop times. You rarely notice a transition happening until it has already completed."
+    }
+  },
+  {
+    "id": "blues",
+    "genre": "Blues",
+    "description": "Expressive, vocal-like guitar phrasing rooted in soul, sorrow, microtonal bends, and a tension-release structure. Even when it’s sad, it never falls flat.",
+    "time_signature": "12/8 (Shuffle)",
+    "physics_engine": {
+      "motion_pattern": "Rolling, cyclical trudging. It leans forward heavily, dragging its weight before pushing off again. It mimics the cadence of a weary, purposeful walk.",
+      "gravity_weight": "Heavy",
+      "friction": "High",
+      "collision_handling": "Elastic stretching"
+    },
+    "render_rules": {
+      "movement_style": "Slurring, bending, and stretching. It feels deeply physical and tactile, like muscle, sinew, and rubber pulling against bone. The physics engine applies intense 'heat distortion' to shapes to mimic guitar string bends.",
+      "geometry": "Warped teardrops, stretching ovals, and structural beams that physically bend, bow, and warp under invisible, emotional pressure without ever fully breaking.",
+      "transitions": "Sluggish melting. The environment slides down the canvas like thick molasses, pooling at the bottom before slowly reforming and dragging itself upward into the next chord progression."
+    }
+  }
+]
