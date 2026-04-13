@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Grid: Polarity Crash</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0d12;
+      --fg: #d8dde9;
+      --accent: #5cf2ff;
+    }
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    canvas {
+      image-rendering: pixelated;
+      border: 1px solid #1f2738;
+      box-shadow: 0 0 30px rgba(92, 242, 255, 0.1);
+      width: min(100vw - 32px, 1024px);
+      height: auto;
+      background: #0b0f18;
+    }
+    .hint {
+      margin-top: 10px;
+      max-width: 1024px;
+      width: min(100vw - 32px, 1024px);
+      line-height: 1.5;
+      color: #9eaac2;
+      font-size: 13px;
+    }
+    .hint b { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <canvas id="game" width="960" height="540" aria-label="Neon Grid brawler"></canvas>
+    <div class="hint">
+      <b>Controls:</b> Move (A/D or ←/→), Jump (W/↑), Attack (J), Dump Inventory Shockwave (Space).
+      The Vortex Meter shifts visuals and weapon form; low clarity reveals the plastic-fork reality.
+    </div>
+  </main>
+  <script src="core.js" type="module"></script>
+</body>
+</html>
