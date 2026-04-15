@@ -1,6 +1,6 @@
-# Neon Grid: Polarity Crash
+# river city tweaker
 
-A lightweight HTML5 canvas brawler prototype focused on performance and simple rendering.
+A lightweight HTML5 canvas brawler prototype focused on performance and simple rendering for **river city tweaker**.
 
 ## Run locally
 
