@@ -1,55 +1,64 @@
-const POLARITY_LINES = [
-  "The drywall isn't a barrier. It's the equator...",
-  'Two hands on the same cosmic steering wheel.'
-];
+export class HUD {
+  static draw(ctx, canvasWidth, canvasHeight, vortexValue, radioText) {
+    const safeVortex = Math.max(0, Math.min(100, vortexValue));
 
-const CLARITY_LINES = [
-  "The form doesn't matter.",
-  "Pick up your fork, buddy. We got work to do."
-];
+    const meterX = 20;
+    const meterY = 20;
+    const meterWidth = 200;
+    const meterHeight = 15;
 
-export function drawVortexMeter(ctx, focus, maxFocus) {
-  const meterW = 260;
-  const meterH = 18;
-  const x = 18;
-  const y = 14;
+    ctx.fillStyle = '#0a0a0c';
+    ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
 
-  ctx.fillStyle = '#000';
-  ctx.fillRect(x - 2, y - 2, meterW + 4, meterH + 4);
+    const fillPercentage = safeVortex / 100;
+    ctx.fillStyle = fillPercentage > 0.8 ? '#ff00ff' : '#39ff14';
+    ctx.fillRect(meterX, meterY, meterWidth * fillPercentage, meterHeight);
 
-  const pct = Math.max(0, Math.min(1, focus / maxFocus));
-  ctx.fillStyle = pct > 0.5 ? '#59f3ff' : '#9f9f9f';
-  ctx.fillRect(x, y, Math.floor(meterW * pct), meterH);
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(meterX, meterY, meterWidth, meterHeight);
 
-  ctx.fillStyle = '#e8ebef';
-  ctx.font = '14px monospace';
-  ctx.fillText(`VORTEX ${Math.round(pct * 100)}%`, x, y + 34);
-}
+    ctx.fillStyle = '#a1a1a1';
+    ctx.font = '12px monospace';
+    ctx.fillText(`VORTEX ${Math.round(safeVortex)}%`, meterX, meterY + 30);
 
-export function drawNateRadio(ctx, focus, tick) {
-  const lines = focus > 35 ? POLARITY_LINES : CLARITY_LINES;
-  const reveal = Math.floor((tick / 18) % (lines.length + 1));
+    if (!radioText) {
+      return;
+    }
 
-  ctx.fillStyle = '#101621';
-  ctx.fillRect(16, 452, 720, 74);
+    const boxHeight = 60;
+    const boxY = canvasHeight - boxHeight - 20;
 
-  ctx.strokeStyle = '#26324d';
-  ctx.strokeRect(16, 452, 720, 74);
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(20, boxY, canvasWidth - 40, boxHeight);
+    ctx.globalAlpha = 1.0;
 
-  ctx.fillStyle = '#8de8ff';
-  ctx.font = '12px monospace';
-  ctx.fillText('NATE // RADIO', 24, 470);
+    ctx.fillStyle = '#39ff14';
+    ctx.font = '16px monospace';
 
-  ctx.fillStyle = '#d8dfec';
-  for (let i = 0; i < reveal; i += 1) {
-    ctx.fillText(lines[i], 24, 490 + i * 18);
+    const text = `NATE (RADIO): ${radioText}`;
+    const maxWidth = canvasWidth - 70;
+    const words = text.split(' ');
+    let line = '';
+    let y = boxY + 25;
+
+    for (let i = 0; i < words.length; i += 1) {
+      const testLine = `${line}${words[i]} `;
+      if (ctx.measureText(testLine).width > maxWidth && line) {
+        ctx.fillText(line.trim(), 35, y);
+        line = `${words[i]} `;
+        y += 18;
+        if (y > boxY + boxHeight - 8) {
+          return;
+        }
+      } else {
+        line = testLine;
+      }
+    }
+
+    if (line) {
+      ctx.fillText(line.trim(), 35, y);
+    }
   }
-}
-
-export function drawInventoryAndHint(ctx, inventoryCount, agilityPenalty) {
-  ctx.fillStyle = '#d6dbe6';
-  ctx.font = '12px monospace';
-  ctx.fillText(`HOARD: ${inventoryCount} scraps`, 760, 28);
-  ctx.fillText(`AGI PENALTY: -${agilityPenalty.toFixed(1)}`, 760, 46);
-  ctx.fillText('SPACE: Yard Sale Shockwave', 760, 64);
 }

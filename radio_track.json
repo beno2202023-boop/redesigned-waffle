@@ -1,0 +1,29 @@
+{
+  "track": "Echoes",
+  "movements": [
+    {
+      "id": "initial",
+      "name": "Initial Movement",
+      "start": 0,
+      "end": 250,
+      "style": "submarine",
+      "colors": ["#004d40", "#00ffcc"]
+    },
+    {
+      "id": "connection",
+      "name": "Human Connection",
+      "start": 251,
+      "end": 1150,
+      "style": "nexus",
+      "colors": ["#ff6d00", "#ffab40"]
+    },
+    {
+      "id": "final",
+      "name": "Final Verse",
+      "start": 1151,
+      "end": 1416,
+      "style": "radiance",
+      "colors": ["#fff9c4", "#ffffff"]
+    }
+  ]
+}

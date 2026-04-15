@@ -1,24 +1,31 @@
 {
-  "schema": "light-brawler-v1",
-  "notes": "9-stat array order: hp, atk, def, spd, agi, focusMax, focusDrain, jump, knockbackRes",
-  "characters": [
-    {
-      "id": "jax",
-      "name": "Jax",
-      "faction": "NeonGrid",
-      "stats": [120, 16, 8, 3.6, 2.8, 100, 7, 10, 0.3],
-      "hitbox": { "w": 24, "h": 44 },
-      "spawn": { "x": 110, "y": 380 },
-      "boundaries": { "xMin": 0, "xMax": 959, "yMin": 0, "yMax": 539 }
-    },
-    {
-      "id": "portal_driller",
-      "name": "Portal Driller",
-      "faction": "DelusionalHoard",
-      "stats": [65, 9, 4, 2.2, 1.4, 0, 0, 7, 0.1],
-      "hitbox": { "w": 22, "h": 40 },
-      "spawn": { "x": 700, "y": 380 },
-      "boundaries": { "xMin": 0, "xMax": 959, "yMin": 0, "yMax": 539 }
+  "jax": {
+    "name": "Jax",
+    "stats": {
+      "punch": 15,
+      "kick": 10,
+      "weapon": 45,
+      "throw": 20,
+      "agility": 30,
+      "defence": 25,
+      "strength": 20,
+      "willpower": 60,
+      "stamina": 40
     }
-  ]
+  },
+  "boss_dan": {
+    "name": "Drywall Dan",
+    "cash_drop": 500,
+    "stats": {
+      "punch": 20,
+      "kick": 10,
+      "weapon": 35,
+      "throw": 40,
+      "agility": 15,
+      "defence": 30,
+      "strength": 25,
+      "willpower": 10,
+      "stamina": 55
+    }
+  }
 }

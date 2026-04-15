@@ -14,9 +14,12 @@ Then open `http://localhost:8080`.
 
 ## Files
 
-- `characters.json`, `levels.json`: compact data for entities and stage boundaries.
-- `core.js`: main loop, object pools, player/enemy update pipeline.
-- `level_layout.js`: primitive `fillRect` stage renderer for Security Hub.
-- `engine_update.js`: AABB collision, delayed surveillance echo, weapon geometry.
-- `ui_renderer.js`: Vortex Meter + Nate radio overlay text.
+- `core.js`: class-based engine bootstrap (`RCTweakerEngine`) with game loop, ghost-input buffer, combat updates, and rendering.
+- `input_handler.js`: centralized key state tracking for movement + J/K/L combat controls.
+- `ui_renderer.js`: HUD class that draws the Vortex meter and Nate radio text box.
+- `level_layout.js`: primitive `fillRect` stage renderer for Security Hub visuals.
+- `engine_update.js`: AABB collision helpers, gravity/friction resolver, delayed echo buffer, and weapon rendering.
+- `levels.json`: stage metadata (`security_hub`) including edges and exits.
+- `characters.json`: character roster/stats (`jax`, `boss_dan`).
+- `radio_track.json`: optional track movement metadata for synchronized radio mood styling.
 - `nate_radio_generator.py`: optional offline audio generation script.
