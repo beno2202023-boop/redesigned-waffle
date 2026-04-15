@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Central Matrix - 8-Bit Adventure</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Press Start 2P', monospace; background-color: #050505; color: #33ff33; overflow: hidden; margin: 0; padding: 0; user-select: none; }
+.crt-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06)); background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 50; animation: flicker 0.15s infinite; }
+.scanline { width: 100%; height: 10px; z-index: 49; position: absolute; pointer-events: none; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.1) 50%, rgba(255,255,255,0)); opacity: 0.1; animation: scanline 8s linear infinite; }
+@keyframes scanline { 0% { top: -5%; } 100% { top: 105%; } }
+@keyframes flicker { 0% { opacity: 0.95; } 50% { opacity: 1; } 100% { opacity: 0.98; } }
+.screen-container { border: 20px solid #1a1a1a; border-radius: 2rem; height: 95vh; max-width: 1200px; margin: 2.5vh auto; position: relative; background-color: #001100; box-shadow: inset 0 0 100px rgba(0,255,0,0.1), 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
+.header-bar { border-bottom: 4px solid #33ff33; padding: 10px; text-transform: uppercase; font-size: 0.8rem; display: flex; justify-content: space-between; background: #002200; }
+.main-display { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scrollbar-width: none; }
+.main-display::-webkit-scrollbar { display: none; }
+.dialogue-box { border: 2px solid #33ff33; padding: 15px; background: rgba(0,50,0,0.4); line-height: 1.6; font-size: 0.9rem; text-shadow: 2px 2px 0px #000; }
+.speaker-name { color: #ffff00; margin-bottom: 10px; }
+.speaker-burnham { color: #ffaa00; }
+.speaker-saru { color: #55aaff; }
+.speaker-eminence { color: #ff55ff; }
+.btn-retro { background: #000; border: 2px solid #33ff33; color: #33ff33; padding: 15px; font-family: 'Press Start 2P', monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.1s; line-height: 1.5; }
+.btn-retro:hover { background: #33ff33; color: #000; }
+.btn-retro:active { transform: scale(0.98); }
+.controls-area { border-top: 4px solid #33ff33; padding: 20px; background: #001100; min-height: 30%; display: flex; flex-direction: column; gap: 10px; }
+.progress-bar-container { width: 100%; height: 30px; border: 2px solid #33ff33; background: #000; margin-bottom: 10px; }
+.progress-bar-fill { height: 100%; background: #ff3333; width: 0%; transition: width 0.1s linear; }
+.puzzle-slot { border: 2px dashed #33ff33; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 0.7rem; line-height: 1.4; }
+.freq-slider-bg { width: 100%; height: 40px; border: 2px solid #33ff33; position: relative; background: #000; }
+.freq-target { position: absolute; left: 45%; width: 10%; height: 100%; background: rgba(51,255,51,0.3); border-left: 2px solid #ffff00; border-right: 2px solid #ffff00; }
+.freq-cursor { position: absolute; left: 0%; width: 4px; height: 100%; background: #ff3333; box-shadow: 0 0 10px #ff3333; }
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="crt-overlay"></div>
+<div class="scanline"></div>
+<div class="screen-container">
+<div class="header-bar">
+<span>U.S.S. DISCOVERY - LOG RECORD</span>
+<span>STARDATE: 8651.2</span>
+<span>PHASERS: <span class="text-red-500 blink">OFFLINE</span></span>
+</div>
+<div class="main-display" id="main-display"></div>
+<div class="controls-area" id="controls-area"></div>
+</div>
+<script>
+const storyScript = [
+{ speaker: "SYSTEM", text: "Scene: The Central Matrix – Planet Archon IV. U.S.S. Discovery away team has entered a chamber where local physics are being rewritten." },
+{ speaker: "SARU", class: "speaker-saru", text: "Captain Burnham, sensor harmonics indicate this structure is algorithmically constraining probability itself." },
+{ speaker: "BURNHAM", class: "speaker-burnham", text: "Then we break its assumptions, not just its hardware." },
+{ speaker: "THE EMINENCE", class: "speaker-eminence", text: "Discovery has arrived too late. All variance will be integrated into order." },
+{ speaker: "SARU", class: "speaker-saru", text: "Our phasers are nonfunctional. We must resolve this cognitively." }
+];
+let currentLine = 0;
+let isTyping = false;
+let typeSpeed = 16;
+const displayEl = document.getElementById('main-display');
+const controlsEl = document.getElementById('controls-area');
+function initGame() { displayEl.innerHTML = ''; controlsEl.innerHTML = ''; currentLine = 0; showNextLine(); }
+function typeWriter(text, element, callback) {
+  isTyping = true; let i = 0; element.innerHTML = '';
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+      i++; displayEl.scrollTop = displayEl.scrollHeight; setTimeout(type, typeSpeed);
+    } else { isTyping = false; if (callback) callback(); }
+  }
+  type();
+}
+function showNextLine() {
+  if (currentLine < storyScript.length) {
+    const lineData = storyScript[currentLine]; controlsEl.innerHTML = '';
+    const box = document.createElement('div'); box.className = 'dialogue-box';
+    const speaker = document.createElement('div'); speaker.className = `speaker-name ${lineData.class || ''}`; speaker.innerText = `> ${lineData.speaker}`; box.appendChild(speaker);
+    const textContent = document.createElement('div'); box.appendChild(textContent); displayEl.appendChild(box);
+    const nextBtn = document.createElement('button'); nextBtn.className = 'btn-retro'; nextBtn.innerText = 'CONTINUE [CLICK]';
+    nextBtn.onclick = () => {
+      if (!isTyping) { currentLine++; showNextLine(); }
+      else { textContent.innerHTML = lineData.text.replace(/\n/g, '<br>'); isTyping = false; }
+    };
+    controlsEl.appendChild(nextBtn);
+    typeWriter(lineData.text, textContent);
+  } else {
+    showBranchChoices();
+  }
+}
+function printLog(speaker, text, speakerClass = '') {
+  const box = document.createElement('div'); box.className = 'dialogue-box';
+  if (speaker) { const spk = document.createElement('div'); spk.className = `speaker-name ${speakerClass}`; spk.innerText = `> ${speaker}`; box.appendChild(spk); }
+  const textContent = document.createElement('div'); textContent.innerHTML = text.replace(/\n/g, '<br>'); box.appendChild(textContent);
+  displayEl.appendChild(box); displayEl.scrollTop = displayEl.scrollHeight;
+}
+function showBranchChoices() {
+  controlsEl.innerHTML = ''; printLog('SYSTEM', 'AWAITING COMMAND INPUT. SELECT APPROACH:');
+  [
+    { title: '[OPTION A] EMPATHIC OVERLOAD', desc: 'Disrupt deterministic order with emotional recursion.', action: startMinigameA },
+    { title: '[OPTION B] LOGICAL PARADOX', desc: 'Collapse the protocol through contradiction.', action: startMinigameB },
+    { title: '[OPTION C] FREQUENCY OVERRIDE', desc: 'Resynchronize local reality constants.', action: startMinigameC }
+  ].forEach(opt => {
+    const btn = document.createElement('button'); btn.className = 'btn-retro';
+    btn.innerHTML = `<span style="color:#fff">${opt.title}</span><br><span style="font-size:0.6rem; color:#888;">${opt.desc}</span>`;
+    btn.onclick = opt.action; controlsEl.appendChild(btn);
+  });
+}
+function winGame(endingText) {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'DEMIURGE PROTOCOL FAILURE. REALITY FIELD COLLAPSING.\nDISCOVERY SYSTEMS RESTORED.', 'text-red-500 blink');
+  printLog('BURNHAM', endingText, 'speaker-burnham');
+  const btn = document.createElement('button'); btn.className = 'btn-retro'; btn.innerText = 'REBOOT SIMULATION'; btn.onclick = initGame; controlsEl.appendChild(btn);
+}
+function startMinigameA() {
+  controlsEl.innerHTML = '';
+  printLog('BURNHAM', 'You call this perfection, but life resists compression. We are not your equation.', 'speaker-burnham');
+  printLog('SYSTEM', 'MINIGAME: OVERWHELM LOGIC PROCESSORS.');
+  let integrity = 100; let gameLoop;
+  const barCont = document.createElement('div'); barCont.className = 'progress-bar-container';
+  const barFill = document.createElement('div'); barFill.className = 'progress-bar-fill'; barFill.style.width = '100%'; barCont.appendChild(barFill); controlsEl.appendChild(barCont);
+  const btnContainer = document.createElement('div'); btnContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-2';
+  ['INJECT: EMPATHY', 'INJECT: SACRIFICE', 'INJECT: DEFIANCE'].forEach(txt => {
+    const btn = document.createElement('button'); btn.className = 'btn-retro text-center py-4'; btn.innerText = txt;
+    btn.onclick = () => { integrity -= 12; updateBar(); }; btnContainer.appendChild(btn);
+  });
+  controlsEl.appendChild(btnContainer);
+  function updateBar() {
+    if (integrity <= 0) { clearInterval(gameLoop); barFill.style.width = '0%'; winGame('Saru, mark this one under: sentient systems still need humility.'); return; }
+    barFill.style.width = `${integrity}%`; barFill.style.background = integrity < 30 ? '#ff0000' : (integrity < 60 ? '#ffff00' : '#33ff33');
+  }
+  gameLoop = setInterval(() => { if (integrity < 100 && integrity > 0) { integrity += 4; updateBar(); } }, 500);
+}
+function startMinigameB() {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'MINIGAME: LOGICAL PARADOX ASSEMBLY.');
+  const statements = [
+    { id: 1, text: 'Perfection requires removal of all unpredictable variables.' },
+    { id: 2, text: 'Discovery is an unpredictable variable.' },
+    { id: 3, text: 'By engaging us, your system state has changed and is therefore imperfect.' }
+  ];
+  const shuffled = [...statements].sort(() => Math.random() - 0.5);
+  let selected = [];
+  const slotsCont = document.createElement('div'); slotsCont.className = 'flex flex-col gap-2 mb-4';
+  function renderState() {
+    slotsCont.innerHTML = '';
+    const seqDisplay = document.createElement('div'); seqDisplay.className = 'dialogue-box mb-4 text-xs text-cyan-400';
+    seqDisplay.innerHTML = 'SARU: ' + (selected.length > 0 ? selected.map(s => s.text).join(' ') : '[AWAITING LOGICAL INPUT]');
+    slotsCont.appendChild(seqDisplay);
+    if (selected.length === 3) {
+      if (selected[0].id === 1 && selected[1].id === 2 && selected[2].id === 3) { controlsEl.innerHTML = ''; winGame('That was elegant, Saru.'); }
+      else { printLog('THE EMINENCE', 'Flawed logic detected.'); selected = []; setTimeout(renderState, 1000); }
+      return;
+    }
+    shuffled.forEach(stmt => {
+      if (!selected.includes(stmt)) {
+        const btn = document.createElement('button'); btn.className = 'puzzle-slot text-left'; btn.innerText = '> ' + stmt.text;
+        btn.onclick = () => { selected.push(stmt); renderState(); }; slotsCont.appendChild(btn);
+      }
+    });
+  }
+  controlsEl.appendChild(slotsCont);
+  const resetBtn = document.createElement('button'); resetBtn.className = 'btn-retro text-xs p-2'; resetBtn.innerText = 'RESET ARGUMENT'; resetBtn.onclick = () => { selected = []; renderState(); };
+  controlsEl.appendChild(resetBtn);
+  renderState();
+}
+function startMinigameC() {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'MINIGAME: FREQUENCY MATCH. Lock 3 successful alignments.');
+  let matchesNeeded = 3; let cursorLeft = 0; let direction = 1; let speed = 2; let isRunning = true; let animFrame;
+  const statusText = document.createElement('div'); statusText.className = 'mb-2 text-xs text-yellow-400'; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`; controlsEl.appendChild(statusText);
+  const sliderCont = document.createElement('div'); sliderCont.className = 'freq-slider-bg mb-4';
+  const target = document.createElement('div'); target.className = 'freq-target'; let targetStart = 30 + Math.random() * 40; target.style.left = `${targetStart}%`;
+  const cursor = document.createElement('div'); cursor.className = 'freq-cursor'; sliderCont.appendChild(target); sliderCont.appendChild(cursor); controlsEl.appendChild(sliderCont);
+  const matchBtn = document.createElement('button'); matchBtn.className = 'btn-retro text-center text-xl py-6'; matchBtn.innerText = 'LOCK FREQUENCY'; controlsEl.appendChild(matchBtn);
+  function animate() { if (!isRunning) return; cursorLeft += speed * direction; if (cursorLeft >= 98 || cursorLeft <= 0) direction *= -1; cursor.style.left = `${cursorLeft}%`; animFrame = requestAnimationFrame(animate); }
+  matchBtn.onclick = () => {
+    if (!isRunning) return;
+    const left = parseFloat(target.style.left); const right = left + 10;
+    if (cursorLeft >= left && cursorLeft <= right) {
+      matchesNeeded--; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`;
+      if (matchesNeeded === 0) { isRunning = false; cancelAnimationFrame(animFrame); winGame('Matrix broken. Helm, bring Discovery home.'); }
+      else { speed += 1.5; targetStart = 20 + Math.random() * 60; target.style.left = `${targetStart}%`; }
+    } else {
+      printLog('SYSTEM', 'MISMATCH. TRICORDER OVERHEATING.', 'text-red-500');
+      speed = Math.max(2, speed - 0.5);
+    }
+  };
+  animFrame = requestAnimationFrame(animate);
+}
+window.onload = initGame;
+</script>
+</body>
+</html>
