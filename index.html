@@ -1,608 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>U.S.S. Discovery: Chroniton Incident</title>
-  <style>
-    :root {
-      --lcars-orange: #ff9c00;
-      --lcars-gold: #d6b067;
-      --lcars-purple: #a984ff;
-      --lcars-blue: #9ed7ff;
-      --lcars-red: #d93939;
-      --panel: #0a0e18;
-      --panel-2: #121a2b;
-      --ink: #e6f4ff;
-      --muted: #92abc6;
-      --ok: #67f2b1;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: radial-gradient(circle at 50% -30%, #213d6f, #070a11 55%);
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      text-transform: uppercase;
-    }
-
-    .app {
-      width: min(1240px, 98vw);
-      height: min(96vh, 930px);
-      margin: 2vh auto;
-      border: 2px solid #293551;
-      background: #060910;
-      display: grid;
-      grid-template-rows: auto 1fr auto auto;
-      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.7);
-    }
-
-    .topbar {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 18px;
-      background: linear-gradient(90deg, var(--lcars-gold), var(--lcars-orange));
-      color: #050505;
-      font-weight: 700;
-      letter-spacing: 1px;
-      font-size: 0.85rem;
-    }
-
-    .pill {
-      background: rgba(0, 0, 0, 0.22);
-      color: #fff;
-      border-radius: 999px;
-      padding: 2px 10px;
-      font-size: 0.72rem;
-    }
-
-    .content {
-      display: grid;
-      grid-template-columns: 2.2fr 1fr;
-      min-height: 0;
-    }
-
-    .scene-wrap {
-      position: relative;
-      border-right: 1px solid #2b3c5d;
-      background: #04070e;
-      overflow: hidden;
-    }
-
-    #scene {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      background: linear-gradient(180deg, #0f1830, #070b15 48%, #06080f);
-    }
-
-    .scene-title {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 8;
-      font-size: 0.74rem;
-      color: var(--lcars-blue);
-      background: rgba(3, 8, 16, 0.75);
-      border: 1px solid rgba(158, 215, 255, 0.4);
-      padding: 5px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-    }
-
-    .bg-art {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .bg-art::before,
-    .bg-art::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(1px);
-      opacity: 0.6;
-    }
-
-    .bg-art::before {
-      width: 470px;
-      height: 470px;
-      left: -60px;
-      top: 90px;
-      background: radial-gradient(circle, rgba(120, 84, 255, 0.28), transparent 70%);
-    }
-
-    .bg-art::after {
-      width: 390px;
-      height: 390px;
-      right: -70px;
-      top: 50px;
-      background: radial-gradient(circle, rgba(87, 232, 255, 0.2), transparent 72%);
-    }
-
-    .hotspot {
-      position: absolute;
-      border: 2px dashed rgba(158, 215, 255, 0.45);
-      background: rgba(158, 215, 255, 0.1);
-      color: #e6f4ff;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: 120ms ease;
-      border-radius: 6px;
-    }
-
-    .hotspot:hover {
-      border-color: var(--lcars-orange);
-      background: rgba(255, 156, 0, 0.14);
-      transform: translateY(-1px);
-    }
-
-    .log-wrap {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-height: 0;
-      background: var(--panel);
-    }
-
-    .status {
-      padding: 10px;
-      border-bottom: 1px solid #273856;
-      font-size: 0.72rem;
-      line-height: 1.4;
-      color: var(--muted);
-    }
-
-    .status strong { color: var(--ok); }
-
-    #log {
-      padding: 10px;
-      overflow: auto;
-      font-family: "Courier New", monospace;
-      text-transform: none;
-      line-height: 1.32;
-      font-size: 0.93rem;
-    }
-
-    .line {
-      margin-bottom: 9px;
-      border-left: 2px solid #30405f;
-      padding-left: 8px;
-    }
-
-    .spk-system { color: #8eb0d8; }
-    .spk-kirk { color: #ffc47c; }
-    .spk-spock { color: #99d9ff; }
-    .spk-entity { color: #d9a4ff; }
-
-    .verbs,
-    .inventory {
-      display: flex;
-      gap: 8px;
-      padding: 10px;
-      border-top: 1px solid #273856;
-      background: var(--panel-2);
-      align-items: center;
-      overflow-x: auto;
-    }
-
-    .verb,
-    .item {
-      border: 1px solid #3f547a;
-      background: #101a2e;
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 7px 12px;
-      cursor: pointer;
-      font-size: 0.73rem;
-      white-space: nowrap;
-    }
-
-    .verb.active,
-    .item.active {
-      border-color: var(--lcars-orange);
-      background: #32210c;
-      color: #ffd7a2;
-    }
-
-    .verb:hover,
-    .item:hover { border-color: var(--lcars-blue); }
-
-    .inv-label {
-      color: var(--lcars-blue);
-      font-size: 0.73rem;
-      font-weight: 700;
-      margin-right: 2px;
-      flex: 0 0 auto;
-    }
-
-    .objective-done {
-      color: #69efb2;
-      text-decoration: line-through;
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.84);
-      display: grid;
-      place-items: center;
-      z-index: 30;
-      padding: 18px;
-    }
-
-    .overlay-card {
-      width: min(760px, 96vw);
-      background: #080d16;
-      border: 2px solid var(--lcars-orange);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
-    }
-
-    .overlay h1 {
-      margin: 0 0 12px;
-      color: var(--lcars-orange);
-      letter-spacing: 3px;
-      font-size: 1.28rem;
-    }
-
-    .overlay p {
-      text-transform: none;
-      color: var(--lcars-blue);
-      font-family: "Courier New", monospace;
-      line-height: 1.45;
-    }
-
-    .cta {
-      border: none;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      cursor: pointer;
-      color: #06070b;
-      background: linear-gradient(90deg, var(--lcars-gold), var(--lcars-orange));
-      text-transform: uppercase;
-    }
-
-    .hidden { display: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Central Matrix - 8-Bit Adventure</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Press Start 2P', monospace; background-color: #050505; color: #33ff33; overflow: hidden; margin: 0; padding: 0; user-select: none; }
+.crt-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06)); background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 50; animation: flicker 0.15s infinite; }
+.scanline { width: 100%; height: 10px; z-index: 49; position: absolute; pointer-events: none; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.1) 50%, rgba(255,255,255,0)); opacity: 0.1; animation: scanline 8s linear infinite; }
+@keyframes scanline { 0% { top: -5%; } 100% { top: 105%; } }
+@keyframes flicker { 0% { opacity: 0.95; } 50% { opacity: 1; } 100% { opacity: 0.98; } }
+.screen-container { border: 20px solid #1a1a1a; border-radius: 2rem; height: 95vh; max-width: 1200px; margin: 2.5vh auto; position: relative; background-color: #001100; box-shadow: inset 0 0 100px rgba(0,255,0,0.1), 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; overflow: hidden; }
+.header-bar { border-bottom: 4px solid #33ff33; padding: 10px; text-transform: uppercase; font-size: 0.8rem; display: flex; justify-content: space-between; background: #002200; }
+.main-display { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scrollbar-width: none; }
+.main-display::-webkit-scrollbar { display: none; }
+.dialogue-box { border: 2px solid #33ff33; padding: 15px; background: rgba(0,50,0,0.4); line-height: 1.6; font-size: 0.9rem; text-shadow: 2px 2px 0px #000; }
+.speaker-name { color: #ffff00; margin-bottom: 10px; }
+.speaker-burnham { color: #ffaa00; }
+.speaker-saru { color: #55aaff; }
+.speaker-eminence { color: #ff55ff; }
+.btn-retro { background: #000; border: 2px solid #33ff33; color: #33ff33; padding: 15px; font-family: 'Press Start 2P', monospace; font-size: 0.8rem; cursor: pointer; text-align: left; transition: all 0.1s; line-height: 1.5; }
+.btn-retro:hover { background: #33ff33; color: #000; }
+.btn-retro:active { transform: scale(0.98); }
+.controls-area { border-top: 4px solid #33ff33; padding: 20px; background: #001100; min-height: 30%; display: flex; flex-direction: column; gap: 10px; }
+.progress-bar-container { width: 100%; height: 30px; border: 2px solid #33ff33; background: #000; margin-bottom: 10px; }
+.progress-bar-fill { height: 100%; background: #ff3333; width: 0%; transition: width 0.1s linear; }
+.puzzle-slot { border: 2px dashed #33ff33; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 0.7rem; line-height: 1.4; }
+.freq-slider-bg { width: 100%; height: 40px; border: 2px solid #33ff33; position: relative; background: #000; }
+.freq-target { position: absolute; left: 45%; width: 10%; height: 100%; background: rgba(51,255,51,0.3); border-left: 2px solid #ffff00; border-right: 2px solid #ffff00; }
+.freq-cursor { position: absolute; left: 0%; width: 4px; height: 100%; background: #ff3333; box-shadow: 0 0 10px #ff3333; }
+.blink { animation: blinker 1s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+</style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div>U.S.S. Discovery / Mission Ops / Chroniton Incident</div>
-      <div class="pill" id="room-pill">Location: Archon Chamber</div>
-      <div class="pill" id="alert-pill">Alert: Yellow</div>
-    </header>
-
-    <main class="content">
-      <section class="scene-wrap">
-        <div id="scene">
-          <div class="bg-art"></div>
-          <div class="scene-title" id="scene-title">ARCHON CHAMBER</div>
-        </div>
-      </section>
-
-      <aside class="log-wrap">
-        <div class="status" id="status-block"></div>
-        <div id="log"></div>
-      </aside>
-    </main>
-
-    <nav class="verbs" id="verbs"></nav>
-    <section class="inventory" id="inventory"></section>
-  </div>
-
-  <div class="overlay" id="intro-overlay">
-    <div class="overlay-card">
-      <h1>Captain's Log / Stardate 8632.4</h1>
-      <p>
-        We are adapting the <em>Star Trek: 25th Anniversary</em> style field gameplay for the U.S.S. Discovery.
-        Use adventure verbs, inspect hotspots, gather tools, and solve the environmental puzzle to shut down
-        the Chroniton Core before the sector is locked in a temporal loop.
-      </p>
-      <button class="cta" id="start-btn">Begin Away Mission</button>
-    </div>
-  </div>
-
-  <script>
-    const verbs = ["LOOK", "TALK", "USE", "PICK UP", "MOVE"];
-    let activeVerb = "LOOK";
-    let selectedItem = null;
-
-    const state = {
-      room: "chamber",
-      inventory: [],
-      flags: {
-        scannedFracture: false,
-        tookPowerCell: false,
-        tookRod: false,
-        spokeWithEntity: false,
-        doorUnlocked: false,
-        powerRouted: false,
-        coreRetuned: false,
-        shutdownComplete: false
-      }
+<div class="crt-overlay"></div>
+<div class="scanline"></div>
+<div class="screen-container">
+<div class="header-bar">
+<span>U.S.S. DISCOVERY - LOG RECORD</span>
+<span>STARDATE: 8651.2</span>
+<span>PHASERS: <span class="text-red-500 blink">OFFLINE</span></span>
+</div>
+<div class="main-display" id="main-display"></div>
+<div class="controls-area" id="controls-area"></div>
+</div>
+<script>
+const storyScript = [
+{ speaker: "SYSTEM", text: "Scene: The Central Matrix – Planet Archon IV. U.S.S. Discovery away team has entered a chamber where local physics are being rewritten." },
+{ speaker: "SARU", class: "speaker-saru", text: "Captain Burnham, sensor harmonics indicate this structure is algorithmically constraining probability itself." },
+{ speaker: "BURNHAM", class: "speaker-burnham", text: "Then we break its assumptions, not just its hardware." },
+{ speaker: "THE EMINENCE", class: "speaker-eminence", text: "Discovery has arrived too late. All variance will be integrated into order." },
+{ speaker: "SARU", class: "speaker-saru", text: "Our phasers are nonfunctional. We must resolve this cognitively." }
+];
+let currentLine = 0;
+let isTyping = false;
+let typeSpeed = 16;
+const displayEl = document.getElementById('main-display');
+const controlsEl = document.getElementById('controls-area');
+function initGame() { displayEl.innerHTML = ''; controlsEl.innerHTML = ''; currentLine = 0; showNextLine(); }
+function typeWriter(text, element, callback) {
+  isTyping = true; let i = 0; element.innerHTML = '';
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+      i++; displayEl.scrollTop = displayEl.scrollHeight; setTimeout(type, typeSpeed);
+    } else { isTyping = false; if (callback) callback(); }
+  }
+  type();
+}
+function showNextLine() {
+  if (currentLine < storyScript.length) {
+    const lineData = storyScript[currentLine]; controlsEl.innerHTML = '';
+    const box = document.createElement('div'); box.className = 'dialogue-box';
+    const speaker = document.createElement('div'); speaker.className = `speaker-name ${lineData.class || ''}`; speaker.innerText = `> ${lineData.speaker}`; box.appendChild(speaker);
+    const textContent = document.createElement('div'); box.appendChild(textContent); displayEl.appendChild(box);
+    const nextBtn = document.createElement('button'); nextBtn.className = 'btn-retro'; nextBtn.innerText = 'CONTINUE [CLICK]';
+    nextBtn.onclick = () => {
+      if (!isTyping) { currentLine++; showNextLine(); }
+      else { textContent.innerHTML = lineData.text.replace(/\n/g, '<br>'); isTyping = false; }
     };
-
-    const objectives = [
-      { id: "obj1", text: "Scan the chroniton fracture" },
-      { id: "obj2", text: "Recover an EPS power cell" },
-      { id: "obj3", text: "Unlock the nexus bulkhead" },
-      { id: "obj4", text: "Retune and shut down the core" }
-    ];
-
-    const rooms = {
-      chamber: {
-        title: "Archon Chamber",
-        art: "linear-gradient(180deg,#1a2240,#090e1c 55%,#090b10)",
-        hotspots: [
-          { id: "fracture", label: "Chroniton Fracture", x: 58, y: 15, w: 26, h: 28 },
-          { id: "crate", label: "Supply Crate", x: 8, y: 58, w: 22, h: 20 },
-          { id: "spock", label: "Mr. Spock", x: 38, y: 56, w: 14, h: 28 },
-          { id: "exit_corridor", label: "To Service Corridor", x: 85, y: 52, w: 12, h: 35 }
-        ]
-      },
-      corridor: {
-        title: "Service Corridor",
-        art: "linear-gradient(180deg,#141d30,#0d121f 50%,#080b12)",
-        hotspots: [
-          { id: "junction", label: "Power Junction", x: 10, y: 20, w: 20, h: 20 },
-          { id: "rod", label: "Isolinear Rod", x: 62, y: 64, w: 14, h: 12 },
-          { id: "door", label: "Jammed Bulkhead", x: 81, y: 37, w: 14, h: 40 },
-          { id: "return_chamber", label: "Back to Chamber", x: 2, y: 48, w: 10, h: 36 }
-        ]
-      },
-      nexus: {
-        title: "Control Nexus",
-        art: "linear-gradient(180deg,#241538,#101522 55%,#080b10)",
-        hotspots: [
-          { id: "entity", label: "The Eminence", x: 40, y: 20, w: 20, h: 32 },
-          { id: "terminal", label: "Nexus Terminal", x: 14, y: 55, w: 25, h: 20 },
-          { id: "core", label: "Chroniton Core", x: 66, y: 34, w: 24, h: 34 },
-          { id: "return_corridor", label: "Back to Corridor", x: 2, y: 50, w: 10, h: 36 }
-        ]
+    controlsEl.appendChild(nextBtn);
+    typeWriter(lineData.text, textContent);
+  } else {
+    showBranchChoices();
+  }
+}
+function printLog(speaker, text, speakerClass = '') {
+  const box = document.createElement('div'); box.className = 'dialogue-box';
+  if (speaker) { const spk = document.createElement('div'); spk.className = `speaker-name ${speakerClass}`; spk.innerText = `> ${speaker}`; box.appendChild(spk); }
+  const textContent = document.createElement('div'); textContent.innerHTML = text.replace(/\n/g, '<br>'); box.appendChild(textContent);
+  displayEl.appendChild(box); displayEl.scrollTop = displayEl.scrollHeight;
+}
+function showBranchChoices() {
+  controlsEl.innerHTML = ''; printLog('SYSTEM', 'AWAITING COMMAND INPUT. SELECT APPROACH:');
+  [
+    { title: '[OPTION A] EMPATHIC OVERLOAD', desc: 'Disrupt deterministic order with emotional recursion.', action: startMinigameA },
+    { title: '[OPTION B] LOGICAL PARADOX', desc: 'Collapse the protocol through contradiction.', action: startMinigameB },
+    { title: '[OPTION C] FREQUENCY OVERRIDE', desc: 'Resynchronize local reality constants.', action: startMinigameC }
+  ].forEach(opt => {
+    const btn = document.createElement('button'); btn.className = 'btn-retro';
+    btn.innerHTML = `<span style="color:#fff">${opt.title}</span><br><span style="font-size:0.6rem; color:#888;">${opt.desc}</span>`;
+    btn.onclick = opt.action; controlsEl.appendChild(btn);
+  });
+}
+function winGame(endingText) {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'DEMIURGE PROTOCOL FAILURE. REALITY FIELD COLLAPSING.\nDISCOVERY SYSTEMS RESTORED.', 'text-red-500 blink');
+  printLog('BURNHAM', endingText, 'speaker-burnham');
+  const btn = document.createElement('button'); btn.className = 'btn-retro'; btn.innerText = 'REBOOT SIMULATION'; btn.onclick = initGame; controlsEl.appendChild(btn);
+}
+function startMinigameA() {
+  controlsEl.innerHTML = '';
+  printLog('BURNHAM', 'You call this perfection, but life resists compression. We are not your equation.', 'speaker-burnham');
+  printLog('SYSTEM', 'MINIGAME: OVERWHELM LOGIC PROCESSORS.');
+  let integrity = 100; let gameLoop;
+  const barCont = document.createElement('div'); barCont.className = 'progress-bar-container';
+  const barFill = document.createElement('div'); barFill.className = 'progress-bar-fill'; barFill.style.width = '100%'; barCont.appendChild(barFill); controlsEl.appendChild(barCont);
+  const btnContainer = document.createElement('div'); btnContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-2';
+  ['INJECT: EMPATHY', 'INJECT: SACRIFICE', 'INJECT: DEFIANCE'].forEach(txt => {
+    const btn = document.createElement('button'); btn.className = 'btn-retro text-center py-4'; btn.innerText = txt;
+    btn.onclick = () => { integrity -= 12; updateBar(); }; btnContainer.appendChild(btn);
+  });
+  controlsEl.appendChild(btnContainer);
+  function updateBar() {
+    if (integrity <= 0) { clearInterval(gameLoop); barFill.style.width = '0%'; winGame('Saru, mark this one under: sentient systems still need humility.'); return; }
+    barFill.style.width = `${integrity}%`; barFill.style.background = integrity < 30 ? '#ff0000' : (integrity < 60 ? '#ffff00' : '#33ff33');
+  }
+  gameLoop = setInterval(() => { if (integrity < 100 && integrity > 0) { integrity += 4; updateBar(); } }, 500);
+}
+function startMinigameB() {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'MINIGAME: LOGICAL PARADOX ASSEMBLY.');
+  const statements = [
+    { id: 1, text: 'Perfection requires removal of all unpredictable variables.' },
+    { id: 2, text: 'Discovery is an unpredictable variable.' },
+    { id: 3, text: 'By engaging us, your system state has changed and is therefore imperfect.' }
+  ];
+  const shuffled = [...statements].sort(() => Math.random() - 0.5);
+  let selected = [];
+  const slotsCont = document.createElement('div'); slotsCont.className = 'flex flex-col gap-2 mb-4';
+  function renderState() {
+    slotsCont.innerHTML = '';
+    const seqDisplay = document.createElement('div'); seqDisplay.className = 'dialogue-box mb-4 text-xs text-cyan-400';
+    seqDisplay.innerHTML = 'SARU: ' + (selected.length > 0 ? selected.map(s => s.text).join(' ') : '[AWAITING LOGICAL INPUT]');
+    slotsCont.appendChild(seqDisplay);
+    if (selected.length === 3) {
+      if (selected[0].id === 1 && selected[1].id === 2 && selected[2].id === 3) { controlsEl.innerHTML = ''; winGame('That was elegant, Saru.'); }
+      else { printLog('THE EMINENCE', 'Flawed logic detected.'); selected = []; setTimeout(renderState, 1000); }
+      return;
+    }
+    shuffled.forEach(stmt => {
+      if (!selected.includes(stmt)) {
+        const btn = document.createElement('button'); btn.className = 'puzzle-slot text-left'; btn.innerText = '> ' + stmt.text;
+        btn.onclick = () => { selected.push(stmt); renderState(); }; slotsCont.appendChild(btn);
       }
-    };
-
-    const logEl = document.getElementById("log");
-    const sceneEl = document.getElementById("scene");
-    const sceneTitleEl = document.getElementById("scene-title");
-    const verbsEl = document.getElementById("verbs");
-    const invEl = document.getElementById("inventory");
-    const statusEl = document.getElementById("status-block");
-    const roomPillEl = document.getElementById("room-pill");
-    const alertPillEl = document.getElementById("alert-pill");
-
-    function addLog(speaker, text, cls = "spk-system") {
-      const row = document.createElement("div");
-      row.className = "line";
-      row.innerHTML = `<span class="${cls}">${speaker}:</span> ${text}`;
-      logEl.appendChild(row);
-      logEl.scrollTop = logEl.scrollHeight;
+    });
+  }
+  controlsEl.appendChild(slotsCont);
+  const resetBtn = document.createElement('button'); resetBtn.className = 'btn-retro text-xs p-2'; resetBtn.innerText = 'RESET ARGUMENT'; resetBtn.onclick = () => { selected = []; renderState(); };
+  controlsEl.appendChild(resetBtn);
+  renderState();
+}
+function startMinigameC() {
+  controlsEl.innerHTML = '';
+  printLog('SYSTEM', 'MINIGAME: FREQUENCY MATCH. Lock 3 successful alignments.');
+  let matchesNeeded = 3; let cursorLeft = 0; let direction = 1; let speed = 2; let isRunning = true; let animFrame;
+  const statusText = document.createElement('div'); statusText.className = 'mb-2 text-xs text-yellow-400'; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`; controlsEl.appendChild(statusText);
+  const sliderCont = document.createElement('div'); sliderCont.className = 'freq-slider-bg mb-4';
+  const target = document.createElement('div'); target.className = 'freq-target'; let targetStart = 30 + Math.random() * 40; target.style.left = `${targetStart}%`;
+  const cursor = document.createElement('div'); cursor.className = 'freq-cursor'; sliderCont.appendChild(target); sliderCont.appendChild(cursor); controlsEl.appendChild(sliderCont);
+  const matchBtn = document.createElement('button'); matchBtn.className = 'btn-retro text-center text-xl py-6'; matchBtn.innerText = 'LOCK FREQUENCY'; controlsEl.appendChild(matchBtn);
+  function animate() { if (!isRunning) return; cursorLeft += speed * direction; if (cursorLeft >= 98 || cursorLeft <= 0) direction *= -1; cursor.style.left = `${cursorLeft}%`; animFrame = requestAnimationFrame(animate); }
+  matchBtn.onclick = () => {
+    if (!isRunning) return;
+    const left = parseFloat(target.style.left); const right = left + 10;
+    if (cursorLeft >= left && cursorLeft <= right) {
+      matchesNeeded--; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`;
+      if (matchesNeeded === 0) { isRunning = false; cancelAnimationFrame(animFrame); winGame('Matrix broken. Helm, bring Discovery home.'); }
+      else { speed += 1.5; targetStart = 20 + Math.random() * 60; target.style.left = `${targetStart}%`; }
+    } else {
+      printLog('SYSTEM', 'MISMATCH. TRICORDER OVERHEATING.', 'text-red-500');
+      speed = Math.max(2, speed - 0.5);
     }
-
-    function addItem(item) {
-      if (state.inventory.includes(item)) return;
-      state.inventory.push(item);
-      addLog("System", `${item} added to inventory.`);
-      renderInventory();
-      updateStatus();
-    }
-
-    function renderVerbs() {
-      verbsEl.innerHTML = "";
-      verbs.forEach((verb) => {
-        const b = document.createElement("button");
-        b.className = `verb ${activeVerb === verb ? "active" : ""}`;
-        b.textContent = verb;
-        b.onclick = () => {
-          activeVerb = verb;
-          selectedItem = null;
-          renderVerbs();
-          renderInventory();
-        };
-        verbsEl.appendChild(b);
-      });
-    }
-
-    function renderInventory() {
-      invEl.innerHTML = `<span class="inv-label">Inventory:</span>`;
-      if (state.inventory.length === 0) {
-        const empty = document.createElement("span");
-        empty.className = "inv-label";
-        empty.style.opacity = "0.7";
-        empty.textContent = "(empty)";
-        invEl.appendChild(empty);
-        return;
-      }
-
-      state.inventory.forEach((item) => {
-        const b = document.createElement("button");
-        b.className = `item ${selectedItem === item ? "active" : ""}`;
-        b.textContent = item;
-        b.onclick = () => {
-          selectedItem = selectedItem === item ? null : item;
-          if (activeVerb !== "USE") activeVerb = "USE";
-          renderVerbs();
-          renderInventory();
-        };
-        invEl.appendChild(b);
-      });
-    }
-
-    function objectiveDone(id) {
-      switch (id) {
-        case "obj1": return state.flags.scannedFracture;
-        case "obj2": return state.flags.tookPowerCell;
-        case "obj3": return state.flags.doorUnlocked;
-        case "obj4": return state.flags.shutdownComplete;
-        default: return false;
-      }
-    }
-
-    function updateStatus() {
-      const html = objectives.map((o) => `<div class="${objectiveDone(o.id) ? "objective-done" : ""}">• ${o.text}</div>`).join("");
-      statusEl.innerHTML = `<strong>Objectives</strong><br>${html}`;
-      alertPillEl.textContent = `Alert: ${state.flags.shutdownComplete ? "Green" : "Yellow"}`;
-    }
-
-    function moveTo(room) {
-      state.room = room;
-      renderRoom();
-      roomPillEl.textContent = `Location: ${rooms[room].title}`;
-      addLog("System", `Entered ${rooms[room].title}.`);
-    }
-
-    function renderRoom() {
-      const room = rooms[state.room];
-      sceneEl.style.background = room.art;
-      sceneTitleEl.textContent = room.title.toUpperCase();
-      sceneEl.querySelectorAll(".hotspot").forEach((n) => n.remove());
-
-      room.hotspots.forEach((hs) => {
-        const b = document.createElement("button");
-        b.className = "hotspot";
-        b.textContent = hs.label;
-        b.style.left = `${hs.x}%`;
-        b.style.top = `${hs.y}%`;
-        b.style.width = `${hs.w}%`;
-        b.style.height = `${hs.h}%`;
-        b.onclick = () => handleAction(hs.id);
-        sceneEl.appendChild(b);
-      });
-    }
-
-    function useWith(item, target) {
-      if (!item) {
-        addLog("System", "Select an inventory item first for USE.");
-        return;
-      }
-
-      if (target === "fracture" && item === "Tricorder") {
-        state.flags.scannedFracture = true;
-        addLog("Spock", "The fracture oscillates at 4.7 terahertz. We'll need to retune the core.", "spk-spock");
-      } else if (target === "door" && item === "Isolinear Rod") {
-        state.flags.doorUnlocked = true;
-        addLog("Kirk", "Bulkhead release is free. Let's move.", "spk-kirk");
-      } else if (target === "terminal" && item === "EPS Cell") {
-        state.flags.powerRouted = true;
-        addLog("System", "Auxiliary power routed to terminal bus.");
-      } else if (target === "core" && item === "Tricorder") {
-        if (!state.flags.powerRouted) {
-          addLog("Spock", "The core is offline. It requires auxiliary power first.", "spk-spock");
-        } else {
-          state.flags.coreRetuned = true;
-          addLog("Spock", "Retune complete. Captain, authorize final shutdown.", "spk-spock");
-        }
-      } else if (target === "entity" && item === "Command Code") {
-        if (state.flags.coreRetuned) {
-          state.flags.shutdownComplete = true;
-          addLog("Kirk", "By authority of Starfleet Command: Demiurge protocol, terminate.", "spk-kirk");
-          addLog("Entity", "...accepted. Temporal lock disengaging...", "spk-entity");
-          addLog("System", "Mission complete. Sector released from chroniton loop.");
-        } else {
-          addLog("Entity", "Premature. The loop remains stable.", "spk-entity");
-        }
-      } else {
-        addLog("System", `${item} has no useful effect on ${target.replace("_", " ")}.`);
-      }
-
-      updateStatus();
-    }
-
-    function handleAction(target) {
-      const verb = activeVerb;
-
-      if (verb === "MOVE") {
-        if (target === "exit_corridor") return moveTo("corridor");
-        if (target === "return_chamber") return moveTo("chamber");
-        if (target === "door") {
-          if (!state.flags.doorUnlocked) {
-            addLog("System", "The bulkhead is jammed.");
-            return;
-          }
-          return moveTo("nexus");
-        }
-        if (target === "return_corridor") return moveTo("corridor");
-        addLog("System", "You can't move there directly.");
-        return;
-      }
-
-      if (verb === "LOOK") {
-        const lookups = {
-          fracture: "A unstable chroniton tear. It pulses with repeating frequency bands.",
-          crate: state.flags.tookPowerCell ? "An empty engineering crate." : "A half-crushed crate. Something glows inside.",
-          spock: "Spock studies the anomaly with clinical calm.",
-          junction: "A damaged EPS relay with scorched conduits.",
-          rod: state.flags.tookRod ? "Only dust remains where the rod sat." : "A rigid isolinear rod is lodged in a panel seam.",
-          door: state.flags.doorUnlocked ? "Bulkhead unlocked; nexus access restored." : "The manual release assembly is fused shut.",
-          entity: "A holographic intelligence wrapped in violet static.",
-          terminal: state.flags.powerRouted ? "Terminal powered and waiting for calibration input." : "Terminal has no power.",
-          core: "The core emits a harmonic hum that feels almost musical."
-        };
-        addLog("System", lookups[target] || "No significant readings.");
-        return;
-      }
-
-      if (verb === "TALK") {
-        if (target === "spock") {
-          addLog("Spock", "A classic away-team puzzle, Captain. Acquire tools, then apply logic.", "spk-spock");
-          addItem("Tricorder");
-          if (!state.inventory.includes("Command Code")) addItem("Command Code");
-        } else if (target === "entity") {
-          state.flags.spokeWithEntity = true;
-          addLog("Entity", "Order is mercy. Chaos is cruelty. Choose your myth.", "spk-entity");
-          addLog("Kirk", "We choose freedom.", "spk-kirk");
-        } else {
-          addLog("System", "No response.");
-        }
-        return;
-      }
-
-      if (verb === "PICK UP") {
-        if (target === "crate" && !state.flags.tookPowerCell) {
-          state.flags.tookPowerCell = true;
-          addItem("EPS Cell");
-        } else if (target === "rod" && !state.flags.tookRod) {
-          state.flags.tookRod = true;
-          addItem("Isolinear Rod");
-        } else {
-          addLog("System", "You can't pick that up.");
-        }
-        updateStatus();
-        return;
-      }
-
-      if (verb === "USE") {
-        return useWith(selectedItem, target);
-      }
-    }
-
-    function boot() {
-      renderVerbs();
-      renderInventory();
-      updateStatus();
-      renderRoom();
-      addLog("System", "Away team deployed to Archon IV.");
-      addLog("Kirk", "Let's do this by the book... mostly.", "spk-kirk");
-      addLog("Spock", "Recommendation: interact with the environment as in late-23rd-century adventure simulations.", "spk-spock");
-    }
-
-    document.getElementById("start-btn").onclick = () => {
-      document.getElementById("intro-overlay").classList.add("hidden");
-      boot();
-    };
-  </script>
+  };
+  animFrame = requestAnimationFrame(animate);
+}
+window.onload = initGame;
+</script>
 </body>
 </html>
