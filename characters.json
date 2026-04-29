@@ -1,0 +1,31 @@
+{
+  "jax": {
+    "name": "Jax",
+    "stats": {
+      "punch": 15,
+      "kick": 10,
+      "weapon": 45,
+      "throw": 20,
+      "agility": 30,
+      "defence": 25,
+      "strength": 20,
+      "willpower": 60,
+      "stamina": 40
+    }
+  },
+  "boss_dan": {
+    "name": "Drywall Dan",
+    "cash_drop": 500,
+    "stats": {
+      "punch": 20,
+      "kick": 10,
+      "weapon": 35,
+      "throw": 40,
+      "agility": 15,
+      "defence": 30,
+      "strength": 25,
+      "willpower": 10,
+      "stamina": 55
+    }
+  }
+}
