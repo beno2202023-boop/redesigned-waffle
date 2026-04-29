@@ -1,0 +1,282 @@
+[
+  {
+    "version": "1.0",
+    "article": "Whether remote work should be the default for software teams?",
+    "question": "Should a software organization adopt remote work as the default model?",
+    "objections": [
+      {
+        "index": 1,
+        "text": "Innovation depends on spontaneous in-person collaboration that remote setups weaken."
+      },
+      {
+        "index": 2,
+        "text": "Junior engineers learn faster when physically co-located with mentors."
+      }
+    ],
+    "sed_contra": {
+      "authority": "Productivity and retention outcomes",
+      "text": "Teams can achieve high performance remotely when communication, documentation, and accountability are designed deliberately."
+    },
+    "respondeo": {
+      "definitions": [
+        {
+          "term": "default model",
+          "meaning": "the expected baseline arrangement with exceptions allowed"
+        },
+        {
+          "term": "high performance",
+          "meaning": "sustained delivery quality, speed, and team health"
+        }
+      ],
+      "distinctions": [
+        "Remote-first differs from remote-only.",
+        "Coordination-heavy work differs from deep-focus work."
+      ],
+      "reasoning_steps": [
+        "Outcomes should be judged by throughput, quality, and retention rather than office presence.",
+        "Remote work improves hiring reach and uninterrupted focus for many engineering tasks.",
+        "Collaboration losses can be offset through intentional rituals, written decision logs, and periodic on-sites."
+      ],
+      "conclusion": "Remote-first should be the default if paired with clear operating norms and in-person cadence for high-bandwidth planning.",
+      "actionable_recommendation": "Adopt a 90-day pilot with quarterly on-sites and explicit metrics for velocity, defects, and attrition."
+    },
+    "replies": [
+      {
+        "to_objection": 1,
+        "text": "Spontaneity can be partially recreated with open virtual rooms, but critical ideation can be concentrated into planned in-person sessions."
+      },
+      {
+        "to_objection": 2,
+        "text": "Mentorship quality depends more on structured pairing and feedback loops than physical proximity alone."
+      }
+    ],
+    "final_conclusion": "Remote-first is prudent when supported by strong managerial and communication systems.",
+    "metadata": {
+      "domain": "management",
+      "difficulty": "intermediate",
+      "mode": "summa"
+    }
+  },
+  {
+    "version": "1.0",
+    "article": "Whether students should use AI tutors daily?",
+    "question": "Is daily AI tutor use beneficial for most students?",
+    "objections": [
+      {
+        "index": 1,
+        "text": "Daily AI use may reduce independent problem-solving and persistence."
+      },
+      {
+        "index": 2,
+        "text": "AI explanations can contain errors that mislead learners."
+      }
+    ],
+    "sed_contra": {
+      "text": "Frequent formative feedback generally improves learning when students must still produce original work and verify claims."
+    },
+    "respondeo": {
+      "definitions": [
+        {
+          "term": "beneficial",
+          "meaning": "improves understanding, retention, and transfer"
+        }
+      ],
+      "distinctions": [
+        "Hinting differs from answer-giving.",
+        "Concept mastery differs from task completion."
+      ],
+      "reasoning_steps": [
+        "Immediate feedback helps correct misconceptions before they harden.",
+        "Over-reliance risk is real, so usage rules must require attempt-first behavior.",
+        "Verification against textbooks or teachers reduces model-error harm."
+      ],
+      "conclusion": "Daily use is beneficial under guardrails that preserve student effort and source verification.",
+      "actionable_recommendation": "Require students to submit their own draft attempt before querying the AI."
+    },
+    "replies": [
+      {
+        "to_objection": 1,
+        "text": "Dependency is mitigated when AI provides scaffolding questions rather than final answers."
+      },
+      {
+        "to_objection": 2,
+        "text": "Error risk is controlled by cross-checking and teacher oversight in high-stakes subjects."
+      }
+    ],
+    "final_conclusion": "Daily AI tutoring is good pedagogy when designed as guided practice, not shortcut automation.",
+    "metadata": {
+      "domain": "education",
+      "difficulty": "basic",
+      "mode": "summa"
+    }
+  },
+  {
+    "version": "1.0",
+    "article": "Whether a city should ban private cars downtown?",
+    "question": "Should a city prohibit private car traffic in its downtown core?",
+    "objections": [
+      {
+        "index": 1,
+        "text": "A ban harms businesses by reducing customer accessibility."
+      },
+      {
+        "index": 2,
+        "text": "It disproportionately burdens disabled and elderly residents."
+      },
+      {
+        "index": 3,
+        "text": "Transit systems may be too weak to absorb displaced demand."
+      }
+    ],
+    "sed_contra": {
+      "text": "Cities that reduce central car volume often gain cleaner air, safer streets, and more productive public space."
+    },
+    "respondeo": {
+      "definitions": [
+        {
+          "term": "ban",
+          "meaning": "restriction with explicit exceptions, enforcement, and alternatives"
+        }
+      ],
+      "distinctions": [
+        "Phased implementation differs from immediate prohibition.",
+        "Through-traffic differs from local access traffic."
+      ],
+      "reasoning_steps": [
+        "Public policy should optimize long-run safety and mobility for the whole population.",
+        "A poorly designed ban can create inequity unless exemptions and mobility services are included.",
+        "Success depends on prior transit investment and logistics planning."
+      ],
+      "conclusion": "A phased restricted-access zone is preferable to an immediate total ban.",
+      "uncertainty": "Projected retail impacts vary by neighborhood and require local pilot data.",
+      "actionable_recommendation": "Run a 12-month phased pilot with disability exemptions and independent impact auditing."
+    },
+    "replies": [
+      {
+        "to_objection": 1,
+        "text": "Footfall can rise when streets become safer and more pleasant, but support for deliveries and parking edges is necessary."
+      },
+      {
+        "to_objection": 2,
+        "text": "Exemptions, paratransit expansion, and curb-design standards directly address accessibility concerns."
+      },
+      {
+        "to_objection": 3,
+        "text": "The policy should be conditional on measurable transit readiness thresholds before expansion."
+      }
+    ],
+    "final_conclusion": "Downtown car reduction is justified when implemented gradually with equity safeguards.",
+    "metadata": {
+      "domain": "public-policy",
+      "difficulty": "advanced",
+      "mode": "debate"
+    }
+  },
+  {
+    "version": "1.0",
+    "article": "Whether open-source software is safer than proprietary software?",
+    "question": "Is open-source software generally more secure than proprietary software?",
+    "objections": [
+      {
+        "index": 1,
+        "text": "Public code visibility gives attackers more information to exploit vulnerabilities."
+      },
+      {
+        "index": 2,
+        "text": "Many open-source projects lack stable funding for security maintenance."
+      }
+    ],
+    "sed_contra": {
+      "text": "Transparent code allows independent audits and faster community patching when governance is healthy."
+    },
+    "respondeo": {
+      "definitions": [
+        {
+          "term": "more secure",
+          "meaning": "lower expected risk over time given threat exposure and patch response"
+        }
+      ],
+      "distinctions": [
+        "Code visibility is not equivalent to exploitability.",
+        "Security posture differs from security potential."
+      ],
+      "reasoning_steps": [
+        "Security depends on process maturity: threat modeling, testing, and response speed.",
+        "Open source can outperform when maintainers and users actively audit and patch.",
+        "Under-resourced projects can underperform regardless of licensing model."
+      ],
+      "conclusion": "Open source is not automatically safer, but can be safer under strong maintenance and governance.",
+      "actionable_recommendation": "Adopt dependency risk scoring and require evidence of active maintenance before production use."
+    },
+    "replies": [
+      {
+        "to_objection": 1,
+        "text": "Attackers already reverse-engineer binaries; visibility also empowers defenders and reviewers."
+      },
+      {
+        "to_objection": 2,
+        "text": "The objection stands for neglected projects, so procurement should evaluate maintainer health explicitly."
+      }
+    ],
+    "final_conclusion": "Security outcomes are governance-dependent, not license-determined.",
+    "metadata": {
+      "domain": "software",
+      "difficulty": "intermediate",
+      "mode": "summa"
+    }
+  },
+  {
+    "version": "1.0",
+    "article": "Whether individuals should invest during market volatility?",
+    "question": "Should long-term investors continue investing during high market volatility?",
+    "objections": [
+      {
+        "index": 1,
+        "text": "Volatility signals elevated risk, so pausing contributions avoids near-term losses."
+      },
+      {
+        "index": 2,
+        "text": "Investors may panic and sell at the worst time, turning paper losses into real losses."
+      }
+    ],
+    "sed_contra": {
+      "text": "Long-term return evidence generally favors disciplined, periodic investing over emotional market timing."
+    },
+    "respondeo": {
+      "definitions": [
+        {
+          "term": "long-term investor",
+          "meaning": "an investor with multi-year horizon and diversified portfolio"
+        }
+      ],
+      "distinctions": [
+        "Volatility differs from permanent capital impairment.",
+        "Liquidity needs differ from investment strategy."
+      ],
+      "reasoning_steps": [
+        "Predicting turning points consistently is rare, while missing rebounds can materially reduce returns.",
+        "Systematic contributions average entry prices and reduce timing error.",
+        "Risk should be managed by asset allocation and emergency reserves, not reactive stopping."
+      ],
+      "conclusion": "Continuing planned contributions is usually rational for long horizons, provided allocation matches risk tolerance.",
+      "uncertainty": "This does not replace personalized financial advice for specific tax or debt constraints.",
+      "actionable_recommendation": "Keep automated contributions, rebalance annually, and hold a separate emergency fund."
+    },
+    "replies": [
+      {
+        "to_objection": 1,
+        "text": "Short-term drawdown risk is real, yet a long horizon makes ongoing accumulation statistically favorable."
+      },
+      {
+        "to_objection": 2,
+        "text": "A written investment policy can prevent panic behaviors more effectively than ad hoc decisions."
+      }
+    ],
+    "final_conclusion": "For diversified long-term investors, disciplined continuity usually beats market-timing pauses.",
+    "metadata": {
+      "domain": "finance",
+      "difficulty": "intermediate",
+      "mode": "brief"
+    }
+  }
+]
