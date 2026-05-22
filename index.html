@@ -166,27 +166,235 @@ function startMinigameB() {
 }
 function startMinigameC() {
   controlsEl.innerHTML = '';
-  printLog('SYSTEM', 'MINIGAME: FREQUENCY MATCH. Lock 3 successful alignments.');
-  let matchesNeeded = 3; let cursorLeft = 0; let direction = 1; let speed = 2; let isRunning = true; let animFrame;
-  const statusText = document.createElement('div'); statusText.className = 'mb-2 text-xs text-yellow-400'; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`; controlsEl.appendChild(statusText);
-  const sliderCont = document.createElement('div'); sliderCont.className = 'freq-slider-bg mb-4';
-  const target = document.createElement('div'); target.className = 'freq-target'; let targetStart = 30 + Math.random() * 40; target.style.left = `${targetStart}%`;
-  const cursor = document.createElement('div'); cursor.className = 'freq-cursor'; sliderCont.appendChild(target); sliderCont.appendChild(cursor); controlsEl.appendChild(sliderCont);
-  const matchBtn = document.createElement('button'); matchBtn.className = 'btn-retro text-center text-xl py-6'; matchBtn.innerText = 'LOCK FREQUENCY'; controlsEl.appendChild(matchBtn);
-  function animate() { if (!isRunning) return; cursorLeft += speed * direction; if (cursorLeft >= 98 || cursorLeft <= 0) direction *= -1; cursor.style.left = `${cursorLeft}%`; animFrame = requestAnimationFrame(animate); }
-  matchBtn.onclick = () => {
-    if (!isRunning) return;
-    const left = parseFloat(target.style.left); const right = left + 10;
-    if (cursorLeft >= left && cursorLeft <= right) {
-      matchesNeeded--; statusText.innerText = `LOCKS REQUIRED: ${matchesNeeded}`;
-      if (matchesNeeded === 0) { isRunning = false; cancelAnimationFrame(animFrame); winGame('Matrix broken. Helm, bring Discovery home.'); }
-      else { speed += 1.5; targetStart = 20 + Math.random() * 60; target.style.left = `${targetStart}%`; }
-    } else {
-      printLog('SYSTEM', 'MISMATCH. TRICORDER OVERHEATING.', 'text-red-500');
-      speed = Math.max(2, speed - 0.5);
-    }
+  printLog('SYSTEM', 'MINIGAME: TACTICAL GRID. Collect drops, access terminals [E], and survive.');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 760;
+  canvas.height = 220;
+  canvas.style.width = '100%';
+  canvas.style.height = '220px';
+  canvas.style.border = '2px solid #33ff33';
+  canvas.style.background = '#000';
+  controlsEl.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const hud = document.createElement('div');
+  hud.className = 'text-xs';
+  controlsEl.appendChild(hud);
+
+  // Minimal Inventory Model
+  const inventory = {
+    energy: 0,
+    shieldCells: 0,
+    weaponMod: 0
   };
-  animFrame = requestAnimationFrame(animate);
+
+  // Lightweight World Items (pooled)
+  const items = Array.from({ length: 12 }, () => ({
+    active: false,
+    x: 0,
+    y: 0,
+    type: 0, // 0 energy, 1 shield, 2 mod
+    life: 0
+  }));
+
+  const terminals = [
+    { x: 100, y: 80, used: false },
+    { x: 620, y: 140, used: false }
+  ];
+
+  const player = { x: 70, y: 110, shields: 100, heat: 0, speed: 2.4 };
+  const enemies = Array.from({ length: 6 }, (_, i) => ({
+    active: true,
+    x: 220 + i * 85,
+    y: 45 + (i % 2) * 120,
+    hp: 2
+  }));
+
+  const keys = { w: false, a: false, s: false, d: false, space: false };
+  const interact = { e: false };
+  let rafId = null;
+  let done = false;
+
+  const onKeyDown = (e) => {
+    const key = e.key.toLowerCase();
+    if (key in keys) keys[key] = true;
+    if (key === ' ') keys.space = true;
+    if (key === 'e') interact.e = true;
+  };
+  const onKeyUp = (e) => {
+    const key = e.key.toLowerCase();
+    if (key in keys) keys[key] = false;
+    if (key === ' ') keys.space = false;
+    if (key === 'e') interact.e = false;
+  };
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+
+  const cleanup = () => {
+    window.removeEventListener('keydown', onKeyDown);
+    window.removeEventListener('keyup', onKeyUp);
+    if (rafId) cancelAnimationFrame(rafId);
+  };
+
+  const movePlayer = () => {
+    if (keys.w) player.y -= player.speed;
+    if (keys.s) player.y += player.speed;
+    if (keys.a) player.x -= player.speed;
+    if (keys.d) player.x += player.speed;
+    player.x = Math.max(8, Math.min(canvas.width - 8, player.x));
+    player.y = Math.max(8, Math.min(canvas.height - 8, player.y));
+  };
+
+  const updateEnemies = () => {
+    enemies.forEach((e) => {
+      if (!e.active) return;
+      const dx = player.x - e.x;
+      const dy = player.y - e.y;
+      const d = Math.hypot(dx, dy) || 1;
+      e.x += (dx / d) * 0.4;
+      e.y += (dy / d) * 0.4;
+      if (d < 14) player.shields = Math.max(0, player.shields - 0.2);
+
+      if (keys.space && d < 52) {
+        e.hp -= 1;
+        player.heat = Math.min(100, player.heat + 0.9);
+      }
+
+      if (e.hp <= 0) {
+        // chance drop
+        if (Math.random() < 0.25) {
+          for (let i = 0; i < items.length; i++) {
+            let it = items[i];
+            if (!it.active) {
+              it.active = true;
+              it.x = e.x;
+              it.y = e.y;
+              it.type = Math.random() < 0.6 ? 0 : (Math.random() < 0.85 ? 1 : 2);
+              it.life = 600;
+              break;
+            }
+          }
+        }
+        e.active = false;
+      }
+    });
+  };
+
+  const updateItemsAndTerminals = () => {
+    for (let i = 0; i < items.length; i++) {
+      let it = items[i];
+      if (!it.active) continue;
+
+      it.life--;
+      if (it.life <= 0) it.active = false;
+
+      const dx = player.x - it.x;
+      const dy = player.y - it.y;
+
+      if (dx * dx + dy * dy < 225) { // 15px pickup radius
+        if (it.type === 0) inventory.energy += 1;
+        if (it.type === 1) {
+          inventory.shieldCells += 1;
+          player.shields = Math.min(100, player.shields + 25);
+        }
+        if (it.type === 2) inventory.weaponMod += 1;
+        it.active = false;
+      }
+    }
+
+    for (let i = 0; i < terminals.length; i++) {
+      let t = terminals[i];
+      if (t.used) continue;
+
+      const dx = player.x - t.x;
+      const dy = player.y - t.y;
+      const near = dx * dx + dy * dy < 400;
+
+      if (near && interact.e) {
+        t.used = true;
+        player.shields = 100;
+        player.heat = 0;
+      }
+    }
+
+    // Reset interaction key each frame
+    interact.e = false;
+  };
+
+  const render = () => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // render terminals
+    terminals.forEach((t) => {
+      const dx = player.x - t.x;
+      const dy = player.y - t.y;
+      const near = dx * dx + dy * dy < 400;
+      if (!t.used && near) {
+        ctx.fillStyle = '#66ccff';
+        ctx.font = '10px monospace';
+        ctx.fillText('PRESS E - ACCESS TERMINAL', t.x - 58, t.y - 10);
+      }
+      ctx.fillStyle = t.used ? '#444' : '#00aaff';
+      ctx.fillRect(t.x - 4, t.y - 4, 8, 8);
+    });
+
+    // enemies
+    enemies.forEach((e) => {
+      if (!e.active) return;
+      ctx.fillStyle = '#ff3366';
+      ctx.fillRect(e.x - 5, e.y - 5, 10, 10);
+    });
+
+    // render items
+    for (let i = 0; i < items.length; i++) {
+      let it = items[i];
+      if (!it.active) continue;
+      if (it.type === 0) ctx.fillStyle = '#00ffaa';
+      if (it.type === 1) ctx.fillStyle = '#66ccff';
+      if (it.type === 2) ctx.fillStyle = '#ffaa00';
+      ctx.fillRect(it.x - 3, it.y - 3, 6, 6);
+    }
+
+    // player
+    ctx.fillStyle = '#33ff33';
+    ctx.fillRect(player.x - 5, player.y - 5, 10, 10);
+  };
+
+  const loop = () => {
+    if (done) return;
+    movePlayer();
+    updateEnemies();
+    updateItemsAndTerminals();
+    render();
+
+    const alive = enemies.some((e) => e.active);
+    const terminalsUsed = terminals.every((t) => t.used);
+    hud.innerText = `SHIELDS:${Math.floor(player.shields)} | HEAT:${Math.floor(player.heat)} | ENERGY:${inventory.energy} | SH-CELLS:${inventory.shieldCells} | MOD:${inventory.weaponMod} | CONTROLS: WASD MOVE, SPACE STUN, E INTERACT`;
+
+    if (!alive && terminalsUsed) {
+      done = true;
+      cleanup();
+      winGame('Field secured. Terminals synchronized. Discovery has control of the matrix.');
+      return;
+    }
+    if (player.shields <= 0) {
+      done = true;
+      cleanup();
+      printLog('SYSTEM', 'Away team incapacitated. Tactical simulation failed.', 'text-red-500');
+      const retry = document.createElement('button');
+      retry.className = 'btn-retro';
+      retry.innerText = 'RETRY TACTICAL GRID';
+      retry.onclick = startMinigameC;
+      controlsEl.appendChild(retry);
+      return;
+    }
+
+    rafId = requestAnimationFrame(loop);
+  };
+
+  loop();
 }
 window.onload = initGame;
 </script>
