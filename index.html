@@ -166,7 +166,7 @@ function startMinigameB() {
 }
 function startMinigameC() {
   controlsEl.innerHTML = '';
-  printLog('SYSTEM', 'MINIGAME: TACTICAL GRID. Collect drops, access terminals [E], and survive.');
+  printLog('SYSTEM', 'MINIGAME: TACTICAL GRID. Stabilize anomaly, access terminals [E], and survive.');
 
   const canvas = document.createElement('canvas');
   canvas.width = 760;
@@ -203,7 +203,28 @@ function startMinigameC() {
     { x: 620, y: 140, used: false }
   ];
 
-  const player = { x: 70, y: 110, shields: 100, heat: 0, speed: 2.4 };
+  const anomaly = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 75,
+    intensity: 1.0,
+    pulse: 0
+  };
+
+  const particles = Array.from({ length: 36 }, () => ({
+    x: 60 + Math.random() * (canvas.width - 120),
+    y: 60 + Math.random() * (canvas.height - 120),
+    vx: (Math.random() - 0.5) * 0.8,
+    vy: (Math.random() - 0.5) * 0.8
+  }));
+
+  const objective = {
+    x: anomaly.x,
+    y: anomaly.y,
+    secured: false
+  };
+
+  const player = { x: 70, y: 110, vx: 0, vy: 0, shields: 100, heat: 0, speed: 2, phase: 0 };
   const enemies = Array.from({ length: 6 }, (_, i) => ({
     active: true,
     x: 220 + i * 85,
@@ -211,7 +232,7 @@ function startMinigameC() {
     hp: 2
   }));
 
-  const keys = { w: false, a: false, s: false, d: false, space: false };
+  const keys = { w: false, a: false, s: false, d: false, arrowup: false, arrowdown: false, arrowleft: false, arrowright: false, space: false };
   const interact = { e: false };
   let rafId = null;
   let done = false;
@@ -237,14 +258,64 @@ function startMinigameC() {
     if (rafId) cancelAnimationFrame(rafId);
   };
 
-  const movePlayer = () => {
-    if (keys.w) player.y -= player.speed;
-    if (keys.s) player.y += player.speed;
-    if (keys.a) player.x -= player.speed;
-    if (keys.d) player.x += player.speed;
+  const updatePlayer = () => {
+    player.vx = 0;
+    player.vy = 0;
+    if (keys.arrowup || keys.w) player.vy = -player.speed;
+    if (keys.arrowdown || keys.s) player.vy = player.speed;
+    if (keys.arrowleft || keys.a) player.vx = -player.speed;
+    if (keys.arrowright || keys.d) player.vx = player.speed;
+    player.x += player.vx;
+    player.y += player.vy;
     player.x = Math.max(8, Math.min(canvas.width - 8, player.x));
     player.y = Math.max(8, Math.min(canvas.height - 8, player.y));
   };
+
+  function drawAnomaly() {
+    anomaly.pulse += 0.02;
+    const r = anomaly.radius + Math.sin(anomaly.pulse) * 10;
+    ctx.strokeStyle = 'rgba(0,150,255,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(anomaly.x, anomaly.y, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  function updateParticles() {
+    for (let p of particles) {
+      const dx = p.x - anomaly.x;
+      const dy = p.y - anomaly.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < anomaly.radius) {
+        const angle = Math.atan2(dy, dx);
+        p.vx += Math.cos(angle + Math.PI / 2) * 0.05 * anomaly.intensity;
+        p.vy += Math.sin(angle + Math.PI / 2) * 0.05 * anomaly.intensity;
+      }
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x > canvas.width - 50 || p.x < 50) p.vx *= -1;
+      if (p.y > canvas.height - 50 || p.y < 50) p.vy *= -1;
+    }
+  }
+
+  function applyAnomalyEffects() {
+    const dx = player.x - anomaly.x;
+    const dy = player.y - anomaly.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < anomaly.radius) {
+      player.phase += 0.01;
+      player.x += Math.sin(performance.now() * 0.002) * 1.5;
+      player.y += Math.cos(performance.now() * 0.002) * 1.5;
+      if (Math.random() < 0.01) {
+        player.x += (Math.random() - 0.5) * 40;
+        player.y += (Math.random() - 0.5) * 40;
+      }
+    } else {
+      player.phase *= 0.98;
+    }
+    player.x = Math.max(8, Math.min(canvas.width - 8, player.x));
+    player.y = Math.max(8, Math.min(canvas.height - 8, player.y));
+  }
 
   const updateEnemies = () => {
     enemies.forEach((e) => {
@@ -325,6 +396,10 @@ function startMinigameC() {
   const render = () => {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawAnomaly();
+
+    ctx.fillStyle = 'rgba(0,200,255,0.8)';
+    particles.forEach((p) => ctx.fillRect(p.x, p.y, 2, 2));
 
     // render terminals
     terminals.forEach((t) => {
@@ -357,32 +432,52 @@ function startMinigameC() {
       ctx.fillRect(it.x - 3, it.y - 3, 6, 6);
     }
 
-    // player
-    ctx.fillStyle = '#33ff33';
-    ctx.fillRect(player.x - 5, player.y - 5, 10, 10);
+    // objective marker
+    ctx.fillStyle = objective.secured ? '#44ff88' : '#00aaff';
+    ctx.fillRect(objective.x - 4, objective.y - 4, 8, 8);
+
+    // player (phase-visible)
+    const alpha = 1 - Math.min(player.phase, 0.7);
+    ctx.fillStyle = `rgba(0,255,150,${alpha})`;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 6, 0, Math.PI * 2);
+    ctx.fill();
   };
 
   const loop = () => {
     if (done) return;
-    movePlayer();
+    updatePlayer();
+    applyAnomalyEffects();
+    updateParticles();
     updateEnemies();
     updateItemsAndTerminals();
+
+    if (!objective.secured) {
+      const dx = player.x - objective.x;
+      const dy = player.y - objective.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 20 && player.phase < 1.5) {
+        objective.secured = true;
+        printLog('SYSTEM', 'Anomaly stabilized. Prepare for extraction.');
+      }
+    }
+
     render();
 
     const alive = enemies.some((e) => e.active);
     const terminalsUsed = terminals.every((t) => t.used);
-    hud.innerText = `SHIELDS:${Math.floor(player.shields)} | HEAT:${Math.floor(player.heat)} | ENERGY:${inventory.energy} | SH-CELLS:${inventory.shieldCells} | MOD:${inventory.weaponMod} | CONTROLS: WASD MOVE, SPACE STUN, E INTERACT`;
+    hud.innerText = `SHIELDS:${Math.floor(player.shields)} | HEAT:${Math.floor(player.heat)} | PHASE:${player.phase.toFixed(2)} | ENERGY:${inventory.energy} | SH-CELLS:${inventory.shieldCells} | MOD:${inventory.weaponMod} | CONTROLS: ARROWS/WASD MOVE, SPACE STUN, E INTERACT`;
 
-    if (!alive && terminalsUsed) {
+    if (!alive && terminalsUsed && objective.secured) {
       done = true;
       cleanup();
       winGame('Field secured. Terminals synchronized. Discovery has control of the matrix.');
       return;
     }
-    if (player.shields <= 0) {
+    if (player.shields <= 0 || player.phase >= 2.2) {
       done = true;
       cleanup();
-      printLog('SYSTEM', 'Away team incapacitated. Tactical simulation failed.', 'text-red-500');
+      printLog('SYSTEM', player.phase >= 2.2 ? 'Temporal phase destabilization critical. Simulation failed.' : 'Away team incapacitated. Tactical simulation failed.', 'text-red-500');
       const retry = document.createElement('button');
       retry.className = 'btn-retro';
       retry.innerText = 'RETRY TACTICAL GRID';
