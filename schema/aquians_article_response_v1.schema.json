@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aquians.ai/schemas/article-response-v1.json",
+  "title": "Aquians Article Response v1",
+  "description": "Scholastic response format inspired by Summa-style dialectic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "article",
+    "question",
+    "objections",
+    "sed_contra",
+    "respondeo",
+    "replies",
+    "final_conclusion"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "article": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Title-like restatement of the user's question."
+    },
+    "question": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Canonical yes/no or decision-form question."
+    },
+    "objections": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "index",
+          "text"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      },
+      "description": "Strongest counterarguments first (steelman)."
+    },
+    "sed_contra": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "Optional source, principle, or authority."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "respondeo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definitions",
+        "distinctions",
+        "reasoning_steps",
+        "conclusion"
+      ],
+      "properties": {
+        "definitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "term",
+              "meaning"
+            ],
+            "properties": {
+              "term": {
+                "type": "string",
+                "minLength": 1
+              },
+              "meaning": {
+                "type": "string",
+                "minLength": 3
+              }
+            }
+          }
+        },
+        "distinctions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "description": "Clarifying distinctions (e.g., short-term vs long-term)."
+        },
+        "reasoning_steps": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "conclusion": {
+          "type": "string",
+          "minLength": 10
+        },
+        "uncertainty": {
+          "type": "string",
+          "description": "Optional explicit uncertainty statement if evidence is incomplete."
+        },
+        "actionable_recommendation": {
+          "type": "string",
+          "description": "Optional practical next step for applied questions."
+        }
+      }
+    },
+    "replies": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "to_objection",
+          "text"
+        ],
+        "properties": {
+          "to_objection": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "final_conclusion": {
+      "type": "string",
+      "minLength": 5
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": [
+            "basic",
+            "intermediate",
+            "advanced"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "summa",
+            "brief",
+            "debate"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {}
+}
